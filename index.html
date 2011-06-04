@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Trigger On View jQuery Plugin</title>
+    <script type="text/javascript" src="resources/syntax/shCore.js"></script>
+    <script type="text/javascript" src="resources/syntax/shBrushJScript.js"></script>
+    <link rel="stylesheet" type="text/css" href="resources/main.css" media="screen,projection"/>
+    <link rel="stylesheet" type="text/css" href="resources/syntax/shCore.css" media="screen,projection"/>
+    <link rel="stylesheet" type="text/css" href="resources/syntax/shCoreDefault.css" media="screen,projection"/>
+    <link rel="stylesheet" type="text/css" href="resources/syntax/shThemeDefault.css" media="screen,projection"/>
+</head>
+<body>
+    <h1>Trigger On View jQuery Plugin</h1>
+    <p>With the help of this plugin you can achieve similar functionality as you can see on Twitter infinitely loading
+        your wall contents.</p>
+    <p>Plugin will help you automatically trigger standard event when specified DOM element gets into the user view
+        (ie. end of your content). Example usage:</p>
+    <pre class="brush:js">
+//add autoclick with standard settings to any dom element
+$("#myElement").triggerOnView();
+//customize plugin settings for the call
+$("#myElement").triggerOnView({
+    debug           : false,      //displays debugging info in the browser
+    eventType       : 'click',    //type of the event that should be triggered on the targeted element
+    verticalRange   : 0,          //vertical offset to expand reaction area (you may need to trigger event even
+                                  //before element gets into the view, but user is in the vicinity of it)
+    horizontalRange : 0,          //horizontal offset to expand reaction area
+    singleShotOnly  : true,       //true if event should be triggered only once when element become visible
+    callback        : null        //function that should be invoked just before event triggering, if the function
+                                  //returns false, triggering is stopped
+                                  //function signature: function(domElement, settings)
+});
+    </pre>
+    <h2>Demonstration</h2>
+    <p><a href="demo/demo.html">Live demo</a></p>
+    <p>Demonstration will simply load another content via Ajax call from the server infinitely. Just try to scroll down
+       to reach the end of the page. New and new content is continuously added to you page as you reach bottom of the
+       page. Newly loaded content has different background and foreground colors for better differentiation.
+    </p>
+    <h2>License</h2>
+    <p>This plugin is available under the <a href="resources/license.txt">MIT license</a>.</p>
+    <script type="text/javascript">
+         SyntaxHighlighter.all()
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Trigger On View jQuery Plugin - Demonstration</title>
+    <script type="text/javascript" src="../resources/syntax/shCore.js"></script>
+    <script type="text/javascript" src="../resources/syntax/shBrushJScript.js"></script>
+    <link rel="stylesheet" type="text/css" href="../resources/main.css" media="screen,projection"/>
+    <link rel="stylesheet" type="text/css" href="../resources/syntax/shCore.css" media="screen,projection"/>
+    <link rel="stylesheet" type="text/css" href="../resources/syntax/shCoreDefault.css" media="screen,projection"/>
+    <link rel="stylesheet" type="text/css" href="../resources/syntax/shThemeDefault.css" media="screen,projection"/>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../src/jquery.triggeronview.js"></script>
+</head>
+<body>
+    <h1>Trigger On View jQuery Plugin - Demonstration</h1>
+    <p>
+       Demonstration will simply load another content via Ajax call from the server infinitely. Just try to scroll down
+       to reach the end of the page. New and new content is inifinitely added to you page - for better differentiation
+       it has different background and foreground colors.
+    </p>
+    <p>There is example of the code powering this page:</p>
+    <pre class="brush:js">
+        //let's count appended fragments
+        var loadedFragments = 0;
+        $(document).ready(function() {
+            //for every element with activeArea class add click handler loading another content from the server
+            $(".activeArea").live("click", function() {
+                $.get("infinite-content.html", function(response) {
+                    loadedFragments++;
+                    //filter first DIV and alter the color properties of it to differentiate from current content
+                    var divLoadedByAjax = $(response).filter("div");
+                    var backgroundColor = (loadedFragments * 20) % 255;
+                    var color = (128 + loadedFragments * 20) % 255;
+                    divLoadedByAjax.css("background-color", "rgb(" + backgroundColor + ", " + backgroundColor + "," + backgroundColor+ ")");
+                    divLoadedByAjax.css("color", "rgb(" + color + ", " + color + "," + color+ ")");
+                    //append the div at the end of the document
+                    $(".activeArea:last").after(divLoadedByAjax);
+                    //let the browser breathe a little bit and find the current last activeArea element and make it
+                    //autoclickable when getting into the view
+                    setTimeout(function() { $(".activeArea:last").triggerOnView({ debug: true }); }, 200)
+                });
+            });
+
+            //make the last DIV of base page automatically clicked when it gets into the view
+            $(".activeArea:last").triggerOnView({ debug: true });
+        });
+    </pre>
+    <script type="text/javascript">
+         SyntaxHighlighter.all()
+    </script>
+    <script language="JavaScript" type="text/javascript">
+        //let's count appended fragments
+        var loadedFragments = 0;
+        $(document).ready(function() {
+            //for every element with activeArea class add click handler loading another content from the server
+            $(".activeArea").live("click", function() {
+                $.get("infinite-content.html", function(response) {
+                    loadedFragments++;
+                    //filter first DIV and alter the color properties of it to differentiate from current content
+                    var divLoadedByAjax = $(response).filter("div");
+                    var backgroundColor = (loadedFragments * 20) % 255;
+                    var color = (128 + loadedFragments * 20) % 255;
+                    divLoadedByAjax.css("background-color", "rgb(" + backgroundColor + ", " + backgroundColor + "," + backgroundColor+ ")");
+                    divLoadedByAjax.css("color", "rgb(" + color + ", " + color + "," + color+ ")");
+                    //append the div at the end of the document
+                    $(".activeArea:last").after(divLoadedByAjax);
+                    //let the browser breathe a little bit and find the current last activeArea element and make it
+                    //autoclickable when getting into the view
+                    setTimeout(function() { $(".activeArea:last").triggerOnView({ debug: true }); }, 200)
+                });
+            });
+
+            //make the last DIV of base page automatically clicked when it gets into the view
+            $(".activeArea:last").triggerOnView({ debug: true });
+        });
+    </script>
+    <p style="height: 1000px;">This area is 1000px long so that scrolling might occur.</p>
+    <p class="activeArea">This widget is not in the viewed area at first, but when it gets visible it is automatically clicked.</p>
+</body>
+</html>
