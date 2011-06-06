@@ -47,10 +47,12 @@
             var triggerOnView = function() {
                 var offset = $this.offset();
                 var $window = $(window);
+                //compute whether the element is entirely visible to the user
                 var doTrigger = $window.scrollTop() + $window.height() >= offset.top + $this.height() + settings.verticalRange &&
                                 $window.scrollTop() <= offset.top + settings.verticalRange &&
                                 $window.scrollLeft() + $window.width() >= offset.left + $this.width() + settings.horizontalRange &&
                                 $window.scrollLeft() <= offset.left + settings.horizontalRange;
+                //this section is for debugging purposes only
                 if(settings.debug) {
                     var $monitor = $('#monitor');
                     var debugContent = "<b>Offset top:</b> " + offset.top + "<br><b>ScrollTop:</b> " + $window.scrollTop() +
@@ -65,28 +67,26 @@
                     }
                 }
                 if(doTrigger) {
-                    var progress = true;
+                    //callback might stop trigerring process
                     if ($.isFunction(settings.callback)) {
                         if (settings.callback($this, settings) === false) {
-                            progress = false;
+                            return false;
                         }
                     }
-                    if (progress) {
-                        $this.trigger(settings.eventType);
-                        //it's one shot function, so unregister itself
-                        if (settings.singleShotOnly) {
-                            $window.unbind("scroll", arguments.callee);
-                        }
-                        return true;
-                    } else {
-                        return false;
+                    $this.trigger(settings.eventType);
+                    //it's one shot function, so unregister itself
+                    if (settings.singleShotOnly) {
+                        $window.unbind("scroll", arguments.callee);
                     }
+                    return true;
                 } else {
                     return false;
                 }
             };
 
+            //execute function immediately to check whether element is not already visible
             if (!triggerOnView.call(this)) {
+                //bind function to window scroll event
                 $(window).bind("scroll", triggerOnView);
             }
 
