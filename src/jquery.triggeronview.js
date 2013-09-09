@@ -16,12 +16,17 @@
  *       callback        : null        //function that should be invoked just before event triggering, if the function
  *                                     //returns false, triggering is stopped
  *                                     //function signature: function(domElement, settings)
+ *       triggerStrategy : "whole"     //selected triggering strategy, there are two baked in (but you can add your own):
+ *                                     //whole: target element must be completely visible to the user (whole)
+ *                                     //part: at least 1 pixel of target element must by visible to the user
+ *                                     //(please note that verticalRange and horizontalRange are taken into
+ *                                     //account too in both strategies)
  * });
  *
  * Licensed under the MIT License.
  * Homepage: http://jquery.novoj.net/triggerOnView/index.html
  *
- * @version 1.0 (4. 6. 2011)
+ * @version 1.1 (4. 4. 2013)
  * @author Jan Novotny (http://blog.novoj.net)
  */
 (function($) {
@@ -33,7 +38,26 @@
             verticalRange   : 0,
             horizontalRange : 0,
             singleShotOnly  : true,
-            callback        : null
+            triggerStrategy : 'whole',
+            callback        : null,
+            triggerStrategies: {
+                'whole': function(element) {
+                    var offset = element.offset();
+                    var $window = $(window);
+                    return $window.scrollTop() + $window.height() >= offset.top + element.height() + settings.verticalRange &&
+                        $window.scrollTop() <= offset.top - settings.verticalRange &&
+                        $window.scrollLeft() + $window.width() >= offset.left + element.width() + settings.horizontalRange &&
+                        $window.scrollLeft() <= offset.left - settings.horizontalRange
+                },
+                'part': function(element) {
+                    var offset = element.offset();
+                    var $window = $(window);
+                    return $window.scrollTop() + $window.height() >= offset.top + settings.verticalRange &&
+                        $window.scrollTop() <= offset.top + element.height() - settings.verticalRange &&
+                        $window.scrollLeft() + $window.width() >= offset.left + settings.horizontalRange &&
+                        $window.scrollLeft() <= offset.left + element.width() - settings.horizontalRange
+                }
+            }
         };
 
         return this.each(function() {
@@ -45,16 +69,13 @@
             }
 
             var triggerOnView = function() {
-                var offset = $this.offset();
                 var $window = $(window);
                 //compute whether the element is entirely visible to the user
-                var doTrigger = $window.scrollTop() + $window.height() >= offset.top + $this.height() + settings.verticalRange &&
-                                $window.scrollTop() <= offset.top + settings.verticalRange &&
-                                $window.scrollLeft() + $window.width() >= offset.left + $this.width() + settings.horizontalRange &&
-                                $window.scrollLeft() <= offset.left + settings.horizontalRange;
+                var doTrigger = settings.triggerStrategies[settings.triggerStrategy]($this);
                 //this section is for debugging purposes only
                 if(settings.debug) {
                     var $monitor = $('#monitor');
+                    var offset = $this.offset();
                     var debugContent = "<b>Offset top:</b> " + offset.top + "<br><b>ScrollTop:</b> " + $window.scrollTop() +
                         "<br><b>Offset left:</b> " + offset.left + "<br><b>ScrollLeft:</b> " + $window.scrollLeft() +
                         "<br><b>ScrollTop + Window:</b> " + ($window.scrollTop() + $window.height()) +
